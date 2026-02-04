@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca de Hyrule - Automática</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --zelda-green: #00703c;
+            --dark-glass: rgba(0, 0, 0, 0.75);
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: #111;
+            background-image: url('https://media.tenor.com/tjL7ZLQIAMcAAAAM/zelda-ocarina-of-time.gif');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 0.8s ease-in-out;
+            color: white;
+            display: flex; justify-content: center;
+            min-height: 100vh;
+        }
+
+        /* ESTILO DO MODO FOCO */
+        .foco-ativo { cursor: pointer; }
+        .foco-ativo .container, .foco-ativo .btn-export {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateY(20px);
+        }
+
+        /* Indicador de Galeria */
+        #gallery-info {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            padding: 10px 25px;
+            border-radius: 30px;
+            border: 1px solid var(--gold);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: 0.5s;
+            pointer-events: none;
+            z-index: 10000;
+            color: var(--gold);
+            letter-spacing: 1px;
+        }
+        .foco-ativo #gallery-info { opacity: 1; }
+
+        .container {
+            background: var(--dark-glass);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px 20px;
+            border-radius: 20px;
+            border: 1px solid var(--gold);
+            box-shadow: 0 0 50px rgba(0,0,0,0.9);
+            text-align: center;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+        }
+
+        .registro-box {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .datas-container { display: flex; flex-wrap: wrap; gap: 15px; width: 100%; }
+        .data-item { flex: 1; min-width: 200px; }
+        .label-data { text-align: left; font-size: 0.85rem; color: var(--gold); margin-bottom: 5px; font-weight: bold; }
+
+        input {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid #444;
+            padding: 12px;
+            color: white;
+            border-radius: 8px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        input:focus { border-color: var(--gold); }
+
+        .btn-main {
+            background: var(--zelda-green);
+            color: white; border: none; padding: 18px;
+            border-radius: 8px; font-weight: bold; cursor: pointer;
+            font-size: 1.1rem; transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn-main:hover { background: #00a85a; transform: scale(1.02); }
+
+        .btn-view-bg {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--gold);
+            color: black;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 1.8rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            z-index: 9999;
+            transition: 0.4s;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        #listaJogos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .card-jogo {
+            background: linear-gradient(180deg, rgba(26,26,26,0.8), rgba(0,0,0,0.9));
+            border-radius: 15px; overflow: hidden; border: 1px solid #333;
+            transition: 0.4s;
+        }
+        .card-img-container { width: 100%; height: 380px; background: #222; }
+        .card-jogo img { width: 100%; height: 100%; object-fit: cover; }
+        .card-content { padding: 20px; text-align: left; }
+        .card-content h3 { color: var(--gold); margin: 0 0 12px 0; font-size: 1.2rem; }
+
+        .card-actions { padding: 15px; display: flex; gap: 10px; background: rgba(255,255,255,0.03); }
+        .btn-edit { background: #444; flex: 1; padding: 10px; border: none; color: white; cursor: pointer; border-radius: 5px; }
+        .btn-del { background: #8b0000; flex: 1; padding: 10px; border: none; color: white; cursor: pointer; border-radius: 5px; }
+    </style>
+</head>
+<body id="bodyHyrule" onclick="proximaFotoGaleria()">
+
+    <div id="gallery-info">✨ Toque para explorar as memórias de Hyrule</div>
+    <button class="btn-view-bg" onclick="toggleModoFoco(event)" title="Contemplar fundo">👁️</button>
+
+    <div class="container">
+        <header>
+            <h1>Biblioteca de Hyrule</h1>
+            <p>Sua lenda escrita nas estrelas</p>
+        </header>
+
+        <section>
+            <div class="registro-box">
+                <input type="hidden" id="editIndex">
+                <input type="text" id="nome" placeholder="Título Completo" required>
+                
+                <div class="datas-container">
+                    <div class="data-item">
+                        <div class="label-data">Data de Início:</div>
+                        <input type="date" id="dataInicio">
+                    </div>
+                    <div class="data-item">
+                        <div class="label-data">Data da Vitória:</div>
+                        <input type="date" id="dataZerou">
+                    </div>
+                </div>
+                
+                <div class="datas-container">
+                    <div class="data-item">
+                        <input type="number" id="dungeons" placeholder="Dungeons Completas">
+                    </div>
+                    <div class="data-item">
+                        <input type="text" id="plataforma" placeholder="Console (Ex: NES, SNES, Switch)">
+                    </div>
+                </div>
+                
+                <button onclick="salvarJogo()" id="btnSalvar" class="btn-main">⚔️ Gravar na Pedra do Tempo</button>
+            </div>
+            
+            <button class="btn-export" onclick="exportarDados()" style="background:none; color:var(--gold); border: 1px solid var(--gold); padding: 8px 15px; border-radius: 5px; cursor: pointer;">
+                📜 Backup JSON
+            </button>
+        </section>
+
+        <div id="listaJogos"></div>
+    </div>
+
+    <script>
+        const databaseZelda = {
+            "the legend of zelda: echoes of wisdom": { 
+                capa: "https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000084612/03d8655e985860d1655e6c535df4214f9d453623253b808940b3f5728a586392",
+                galeria: [
+                    "https://images.wallpapersden.com/image/download/the-legend-of-zelda-echoes-of-wisdom-2024_bWlqZmqUmZqaraWkpJRmbmdlrWZnZWU.jpg",
+                    "https://cdn.omelete.com.br/K_F6vS4QxRj6LhW_A1B9TzM9Mnc=/1200x630/smart/extras/conteudos/zelda_echoes_wisdom.jpg"
+                ]
+            },
+            "the legend of zelda: tears of the kingdom": {
+                capa: "https://upload.wikimedia.org/wikipedia/pt/a/af/The_Legend_of_Zelda_Tears_of_the_Kingdom_capa.png",
+                galeria: [
+                    "https://images7.alphacoders.com/131/1314905.jpeg",
+                    "https://wallpaperaccess.com/full/8323348.jpg"
+                ]
+            },
+            "the legend of zelda: majora's mask": {
+                capa: "https://upload.wikimedia.org/wikipedia/pt/3/35/The_Legend_of_Zelda_Majora%27s_Mask_capa.png",
+                galeria: ["https://external-preview.redd.it/mm-majoras-mask-art-director-wanted-to-work-on-one-last-v0-fnes5ntCClus7eST8-RRf2emrQl55whDWt6bMo3PyKM.jpg?width=640&crop=smart&auto=webp&s=0eaf321e772c62d5eaff46caef9164ded1abf9d0",
+                 "https://external-preview.redd.it/-jM6t9c17FeN6g6mIvU6ofAW6GfP0hJEvJ1RKLuwT3Q.png?auto=webp&s=76ec2d20e9b9587c4008c444ad580924402e1abc"]
+            },
+            "the legend of zelda: ocarina of time": {
+                capa: "https://s2-techtudo.glbimg.com/Gl0uFZq30gR-iY3zuij0Hxaeg9o=/0x0:695x476/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2021/f/Y/wnMJWOQAe0EikqH0oCQg/2013-11-22-zelda01.jpg",
+                galeria: [ "https://pbs.twimg.com/media/G-Ejo2pbAAA3Lku.jpg",
+                 "https://media.tenor.com/tjL7ZLQIAMcAAAAM/zelda-ocarina-of-time.gif"]
+                 
+            },
+            "the legend of zelda: oracle of ages": {
+                capa: "https://upload.wikimedia.org/wikipedia/pt/a/a6/The_Legend_of_Zelda_Oracle_of_Ages_capa_europa_Game_Boy_Color.png",
+                galeria: ["https://www.rpgfan.com/wp-content/uploads/2020/12/The-Legend-of-Zelda-Oracle-of-Ages-Artwork-004.webp",
+                 "https://media.tenor.com/YniopqJYMIkAAAAe/gato-rindo.png"]
+            },
+            "the legend of zelda: oracle of seasons": {
+                capa: "https://upload.wikimedia.org/wikipedia/pt/f/fe/The_Legend_of_Zelda_Oracle_of_Seasons_capa_europa_Game_Boy_Color.png",
+                galeria: ["https://zeldauniverse.net/wp-content/uploads/2013/07/Oracle_of_Seasons_Artwork_2.jpg",
+                 "https://nintendoreviewsblog.wordpress.com/wp-content/uploads/2013/06/tloz_oracle_of_seasons_presentation.jpg"]
+            },
+            "the legend of zelda: link's awakening": { 
+                capa: "https://upload.wikimedia.org/wikipedia/pt/f/f8/The_Legend_of_Zelda_Link%27s_Awakening_capa.png",
+                galeria: ["https://i.etsystatic.com/10064703/r/il/2a87e5/4983455899/il_570xN.4983455899_pmsp.jpg",
+                    "https://preview.redd.it/this-meme-is-true-v0-c9v1fhwtmqdg1.jpeg?auto=webp&s=8bf85fcf8036c30fc5c339aa5b37f8d4a92ac28d"
+                ]
+            },
+            "the legend of zelda: a link to the past": { 
+                capa: "https://upload.wikimedia.org/wikipedia/pt/3/31/The_Legenda_of_Zelda_A_Link_to_the_Past_capa.png",
+                galeria: [
+                    "https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/alttp_link_looking_at_the_tower_of_hera_artwork.png",
+                    "https://i.makeagif.com/media/5-26-2017/RUzW55.gif"
+                ]
+            },
+            "the legend of zelda ii: the adventure of link": { 
+                capa: "https://supergamestation.com/cdn/shop/products/ZeldaIITheAdventureofLink_1200x1200.jpg?v=1590121867",
+                galeria: ["https://www.nintendo.co.jp/software/zelda2/assets/img/story_thumb8.jpg",
+                 "https://upload.wikimedia.org/wikipedia/en/4/44/I_am_Error.png"
+                ]
+            },
+            "the legend of zelda": { 
+                capa: "https://upload.wikimedia.org/wikipedia/pt/9/96/The_Legend_of_Zelda_1_capa.png",
+                galeria: [
+                    "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4YbJ8OQjMvVZ0TO5EQEmuy8E9L_VYoQIqDTdQrRcFUVDSxiZ05CZBtoqwZ65yPBaPVCyRh_Yd7YxQuuC_QgWrSXIIjeTNHDED_HIRALo9U0KvcrXEqQXbrj_aTTY5KLsFtEcsIkxw4tCE/s1600/Zelda_NES_Nintendo.jpg",
+                    "https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyZ244OXJyMXFxOHh2ZHBtcGE4dmptMWtkM3U2ejJtOXRwNXQ1cGZ3bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/kuGxJyTQQAUw0/giphy.gif"
+                ]
+            }
+        };
+
+        let jogos = JSON.parse(localStorage.getItem('bibliotecaHyrule')) || [];
+        let fotoAtualIndex = 0;
+
+        function toggleModoFoco(event) {
+            if(event) event.stopPropagation();
+            const body = document.getElementById('bodyHyrule');
+            const btn = document.querySelector('.btn-view-bg');
+            body.classList.toggle('foco-ativo');
+
+            if (body.classList.contains('foco-ativo')) {
+                btn.innerText = "❌";
+                btn.style.background = "#8b0000";
+                btn.style.color = "white";
+                fotoAtualIndex = 0;
+                atualizarBackgroundFoco();
+            } else {
+                btn.innerText = "👁️";
+                btn.style.background = "var(--gold)";
+                btn.style.color = "black";
+                renderizarJogos();
+            }
+        }
+
+        function proximaFotoGaleria() {
+            if (!document.body.classList.contains('foco-ativo') || jogos.length === 0) return;
+            fotoAtualIndex++;
+            atualizarBackgroundFoco();
+        }
+
+        function atualizarBackgroundFoco() {
+            if (jogos.length === 0) return;
+            const ultimoJogo = jogos[jogos.length - 1];
+            const info = buscarInfoJogo(ultimoJogo.nome);
+            const galeria = info.galeria;
+            
+            const indexReal = fotoAtualIndex % galeria.length;
+            document.body.style.backgroundImage = `url('${galeria[indexReal]}')`;
+            document.getElementById('gallery-info').innerText = `Visão ${indexReal + 1} de ${galeria.length}`;
+        }
+
+        function buscarInfoJogo(nome) {
+            const nomeFiltro = nome.toLowerCase().trim();
+            const chaves = Object.keys(databaseZelda).sort((a, b) => b.length - a.length);
+            for (let chave of chaves) {
+                if (nomeFiltro.includes(chave)) return databaseZelda[chave];
+            }
+            return {
+                capa: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa4C1a1U48Qg3LIk6bFdXTwOCgBavK4GA6aw&s",
+                galeria: ["https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUyczF3MWxycnd0NWFmeHIxdGl0N2xlNTYyZzh0Z3lmOTkxOGdzbmJuMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jgVXeRc0Jvv4QFghcz/giphy.gif"]
+            };
+        }
+
+        function formatarData(data) {
+            if (!data) return "---";
+            const [ano, mes, dia] = data.split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        function renderizarJogos() {
+            const lista = document.getElementById('listaJogos');
+            lista.innerHTML = '';
+            
+            if (jogos.length > 0) {
+                const ultimoJogo = jogos[jogos.length - 1];
+                const info = buscarInfoJogo(ultimoJogo.nome);
+                document.body.style.backgroundImage = `url('${info.galeria[0]}')`;
+            } else {
+                document.body.style.backgroundImage = `url('https://media.tenor.com/tjL7ZLQIAMcAAAAM/zelda-ocarina-of-time.gif')`;
+            }
+
+            jogos.forEach((jogo, index) => {
+                const info = buscarInfoJogo(jogo.nome);
+                lista.innerHTML += `
+                    <div class="card-jogo">
+                        <div class="card-img-container"><img src="${info.capa}"></div>
+                        <div class="card-content">
+                            <h3>${jogo.nome}</h3>
+                            <p>🎮 <strong>Console:</strong> ${jogo.plataforma || 'N/A'}</p>
+                            <p>📅 <strong>Início:</strong> ${formatarData(jogo.dataInicio)}</p>
+                            <p>🏆 <strong>Zerado:</strong> ${formatarData(jogo.dataZerou)}</p>
+                            <p>🏰 <strong>Dungeons:</strong> ${jogo.dungeons || '0'}</p>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-edit" onclick="event.stopPropagation(); prepararEdicao(${index})">Editar</button>
+                            <button class="btn-del" onclick="event.stopPropagation(); deletarJogo(${index})">Apagar</button>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function salvarJogo() {
+            const nomeInput = document.getElementById('nome').value;
+            if (!nomeInput) return alert("Dê um título à sua lenda!");
+
+            const jogo = {
+                nome: nomeInput,
+                dataInicio: document.getElementById('dataInicio').value,
+                dataZerou: document.getElementById('dataZerou').value,
+                dungeons: document.getElementById('dungeons').value,
+                plataforma: document.getElementById('plataforma').value
+            };
+
+            const editIndex = document.getElementById('editIndex').value;
+            if (editIndex === "") {
+                jogos.push(jogo);
+            } else {
+                jogos[editIndex] = jogo;
+                document.getElementById('editIndex').value = "";
+                document.getElementById('btnSalvar').innerText = "⚔️ Gravar na Pedra do Tempo";
+            }
+
+            localStorage.setItem('bibliotecaHyrule', JSON.stringify(jogos));
+            limparCampos();
+            renderizarJogos();
+        }
+
+        function deletarJogo(index) {
+            if (confirm("Apagar este registro?")) {
+                jogos.splice(index, 1);
+                localStorage.setItem('bibliotecaHyrule', JSON.stringify(jogos));
+                renderizarJogos();
+            }
+        }
+
+        function prepararEdicao(index) {
+            const jogo = jogos[index];
+            document.getElementById('nome').value = jogo.nome;
+            document.getElementById('dataInicio').value = jogo.dataInicio;
+            document.getElementById('dataZerou').value = jogo.dataZerou;
+            document.getElementById('dungeons').value = jogo.dungeons;
+            document.getElementById('plataforma').value = jogo.plataforma;
+            document.getElementById('editIndex').value = index;
+            document.getElementById('btnSalvar').innerText = "🔄 Atualizar Registro";
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function limparCampos() {
+            document.querySelectorAll('input:not([type="hidden"])').forEach(i => i.value = '');
+        }
+
+        function exportarDados() {
+            const blob = new Blob([JSON.stringify(jogos, null, 2)], {type : 'application/json'});
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = 'backup_hyrule.json';
+            a.click();
+        }
+
+        renderizarJogos();
+    </script>
+</body>
+</html>
