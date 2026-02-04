@@ -5,35 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca de Hyrule - Automática</title>
     <style>
+        /* CONFIGURAÇÕES GLOBAIS E VARIÁVEIS CSS 
+           Facilitam a manutenção das cores principais do tema Zelda em todo o documento */
         :root {
             --gold: #d4af37;
             --zelda-green: #00703c;
-            --dark-glass: rgba(0, 0, 0, 0.75);
+            --dark-glass: rgba(0, 0, 0, 0.75); /* Efeito de vidro escuro para o fundo dos painéis */
         }
 
         body {
             margin: 0; padding: 0;
             font-family: 'Segoe UI', Roboto, sans-serif;
             background-color: #111;
+            /* O GIF de fundo inicial estabelece a atmosfera "Ocarina of Time" */
             background-image: url('https://media.tenor.com/tjL7ZLQIAMcAAAAM/zelda-ocarina-of-time.gif');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
-            transition: background-image 0.8s ease-in-out;
+            background-attachment: fixed; /* O fundo permanece estático enquanto o conteúdo rola */
+            transition: background-image 0.8s ease-in-out; /* Suaviza a troca de artes de fundo via JS */
             color: white;
             display: flex; justify-content: center;
             min-height: 100vh;
         }
 
-        /* ESTILO DO MODO FOCO */
+        /* LÓGICA DO MODO FOCO (CONTEMPLAÇÃO)
+           Quando a classe 'foco-ativo' é adicionada ao body via JavaScript, 
+           ocultamos a interface para destacar as imagens de fundo. */
         .foco-ativo { cursor: pointer; }
         .foco-ativo .container, .foco-ativo .btn-export {
             opacity: 0;
-            pointer-events: none;
+            pointer-events: none; /* Impede cliques em elementos invisíveis */
             transform: translateY(20px);
         }
 
-        /* Indicador de Galeria */
+        /* Painel flutuante que indica o status da galeria no topo da tela */
         #gallery-info {
             position: fixed;
             top: 20px;
@@ -53,6 +58,8 @@
         }
         .foco-ativo #gallery-info { opacity: 1; }
 
+        /* ESTILIZAÇÃO DO CONTAINER PRINCIPAL (GLASSMORPHISM)
+           O backdrop-filter cria o efeito de desfoque no fundo atrás do painel */
         .container {
             background: var(--dark-glass);
             backdrop-filter: blur(15px);
@@ -110,6 +117,7 @@
         }
         .btn-main:hover { background: #00a85a; transform: scale(1.02); }
 
+        /* Botão flutuante (Olho) para ativar o Modo Foco */
         .btn-view-bg {
             position: fixed;
             bottom: 30px;
@@ -128,6 +136,8 @@
             display: flex; align-items: center; justify-content: center;
         }
 
+        /* GRID DOS CARDS DE JOGOS
+           O grid-template-columns automático permite que o layout seja responsivo sem media queries complexas */
         #listaJogos {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -198,6 +208,8 @@
     </div>
 
     <script>
+        /* DICIONÁRIO DE ATIVOS (Assets)
+           O código busca por estas chaves dentro do nome digitado para carregar as artes corretas automaticamente */
         const databaseZelda = {
             "the legend of zelda: echoes of wisdom": { 
                 capa: "https://assets.nintendo.com/image/upload/ar_16:9,c_lpad,w_1240/b_white/f_auto/q_auto/ncom/software/switch/70010000084612/03d8655e985860d1655e6c535df4214f9d453623253b808940b3f5728a586392",
@@ -231,8 +243,8 @@
             },
             "the legend of zelda: oracle of seasons": {
                 capa: "https://upload.wikimedia.org/wikipedia/pt/f/fe/The_Legend_of_Zelda_Oracle_of_Seasons_capa_europa_Game_Boy_Color.png",
-                galeria: ["https://zeldauniverse.net/wp-content/uploads/2013/07/Oracle_of_Seasons_Artwork_2.jpg",
-                 "https://nintendoreviewsblog.wordpress.com/wp-content/uploads/2013/06/tloz_oracle_of_seasons_presentation.jpg"]
+                galeria: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7cjYDfmmgQuzLhIMJONTV-3XR4k3K1BFZsw&s",
+                 "https://nintendoreviewsblog.wordpress.com/wp-content/uploads/2013/06/tloz_oracle_of_seasons_presentation.jpg?w=584"]
             },
             "the legend of zelda: link's awakening": { 
                 capa: "https://upload.wikimedia.org/wikipedia/pt/f/f8/The_Legend_of_Zelda_Link%27s_Awakening_capa.png",
@@ -248,9 +260,9 @@
                 ]
             },
             "the legend of zelda ii: the adventure of link": { 
-                capa: "https://supergamestation.com/cdn/shop/products/ZeldaIITheAdventureofLink_1200x1200.jpg?v=1590121867",
-                galeria: ["https://www.nintendo.co.jp/software/zelda2/assets/img/story_thumb8.jpg",
-                 "https://upload.wikimedia.org/wikipedia/en/4/44/I_am_Error.png"
+                capa: "https://greenhillszone.com/wp-content/uploads/2013/01/563487_29057_front.jpg",
+                galeria: ["https://external-preview.redd.it/zelda-2-was-nintendo-at-its-best-unpredictable-v0-p_lQE8qCivcCjvUstY6svoZHkLTU4QdFG-b_h5Aznsw.jpg?auto=webp&s=2f2abc5444fde443f3c1273ea6bfa9f7a87fc3c3",
+                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuD4y-4t3zgTpmMr69zZcmvfxrqADTUM3H0A&s"
                 ]
             },
             "the legend of zelda": { 
@@ -262,9 +274,13 @@
             }
         };
 
+        /* LÓGICA DE PERSISTÊNCIA
+           Recupera os dados do localStorage (armazenamento persistente do navegador) ou inicia um array vazio */
         let jogos = JSON.parse(localStorage.getItem('bibliotecaHyrule')) || [];
         let fotoAtualIndex = 0;
 
+        /* CONTROLE DO MODO FOCO
+           Altera a aparência da página para esconder os menus e mostrar a arte de fundo */
         function toggleModoFoco(event) {
             if(event) event.stopPropagation();
             const body = document.getElementById('bodyHyrule');
@@ -285,12 +301,15 @@
             }
         }
 
+        /* NAVEGAÇÃO DA GALERIA
+           Muda para a próxima imagem da galeria do jogo atual ao clicar em qualquer lugar da tela no Modo Foco */
         function proximaFotoGaleria() {
             if (!document.body.classList.contains('foco-ativo') || jogos.length === 0) return;
             fotoAtualIndex++;
             atualizarBackgroundFoco();
         }
 
+        /* Troca o background do body usando o índice da galeria e o operador de resto (%) para ciclar as fotos */
         function atualizarBackgroundFoco() {
             if (jogos.length === 0) return;
             const ultimoJogo = jogos[jogos.length - 1];
@@ -302,24 +321,30 @@
             document.getElementById('gallery-info').innerText = `Visão ${indexReal + 1} de ${galeria.length}`;
         }
 
+        /* MOTOR DE BUSCA INTELIGENTE
+           Varre o dicionário databaseZelda em busca de uma correspondência parcial com o nome inserido */
         function buscarInfoJogo(nome) {
             const nomeFiltro = nome.toLowerCase().trim();
             const chaves = Object.keys(databaseZelda).sort((a, b) => b.length - a.length);
             for (let chave of chaves) {
                 if (nomeFiltro.includes(chave)) return databaseZelda[chave];
             }
+            // Fallback: Artes genéricas caso o jogo não esteja no banco de dados
             return {
                 capa: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSa4C1a1U48Qg3LIk6bFdXTwOCgBavK4GA6aw&s",
                 galeria: ["https://media4.giphy.com/media/v1.Y2lkPTZjMDliOTUyczF3MWxycnd0NWFmeHIxdGl0N2xlNTYyZzh0Z3lmOTkxOGdzbmJuMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/jgVXeRc0Jvv4QFghcz/giphy.gif"]
             };
         }
 
+        /* Converte o formato YYYY-MM-DD do input date para DD/MM/YYYY */
         function formatarData(data) {
             if (!data) return "---";
             const [ano, mes, dia] = data.split('-');
             return `${dia}/${mes}/${ano}`;
         }
 
+        /* ATUALIZAÇÃO DA INTERFACE (DOM)
+           Lê o array de jogos e gera dinamicamente o HTML de cada card no container #listaJogos */
         function renderizarJogos() {
             const lista = document.getElementById('listaJogos');
             lista.innerHTML = '';
@@ -352,6 +377,8 @@
             });
         }
 
+        /* SALVAMENTO DE DADOS
+           Cria um objeto 'jogo' e decide se o adiciona ao array (.push) ou se atualiza uma posição existente */
         function salvarJogo() {
             const nomeInput = document.getElementById('nome').value;
             if (!nomeInput) return alert("Dê um título à sua lenda!");
@@ -378,6 +405,8 @@
             renderizarJogos();
         }
 
+        /* REMOÇÃO DE REGISTRO
+           Remove o item do array e atualiza o armazenamento local */
         function deletarJogo(index) {
             if (confirm("Apagar este registro?")) {
                 jogos.splice(index, 1);
@@ -386,6 +415,8 @@
             }
         }
 
+        /* LÓGICA DE EDIÇÃO
+           Recupera os dados de um card e preenche o formulário para edição */
         function prepararEdicao(index) {
             const jogo = jogos[index];
             document.getElementById('nome').value = jogo.nome;
@@ -398,10 +429,13 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
+        /* Resetar valores dos inputs */
         function limparCampos() {
             document.querySelectorAll('input:not([type="hidden"])').forEach(i => i.value = '');
         }
 
+        /* SISTEMA DE EXPORTAÇÃO
+           Cria um arquivo .json para download permitindo que o usuário faça o backup físico de sua biblioteca */
         function exportarDados() {
             const blob = new Blob([JSON.stringify(jogos, null, 2)], {type : 'application/json'});
             const a = document.createElement('a');
@@ -410,6 +444,7 @@
             a.click();
         }
 
+        /* Inicialização do sistema ao carregar a página */
         renderizarJogos();
     </script>
 </body>
