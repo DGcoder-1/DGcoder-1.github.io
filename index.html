@@ -11,13 +11,13 @@
         /* O :root está definindo as cores definitivas que serão usadas no site, porém precisa de acompanhamento,
         alguém que use essas cores pegando as cores do root como base é muito importante se não, ele será inútil 
         */
-        /*
+        
         :root {
             --gold: #d4af37;
             --zelda-green: #00703c;
             --dark-glass: rgba(0, 0, 0, 0.75);
         }
-        */
+        
         /*No body está sendo definida a fonte, posição, imagem do background e o tamanho */
         
         body {
@@ -33,7 +33,7 @@
             display: flex; justify-content: center;
             min-height: 100vh;
         }
-        /*
+        
         .foco-ativo { cursor: pointer; }
         .foco-ativo .container, .foco-ativo .btn-export-group {
             opacity: 0;
@@ -72,7 +72,7 @@
         }
 
         /* Contador Discreto */
-        /*
+        
         .contador-lendas {
             font-size: 0.9rem;
             color: rgba(255, 255, 255, 0.6);
@@ -149,9 +149,10 @@
         .card-actions { padding: 15px; display: flex; gap: 10px; background: rgba(255,255,255,0.03); }
         .btn-edit { background: #444; flex: 1; padding: 10px; border: none; color: white; cursor: pointer; border-radius: 5px; }
         .btn-del { background: #8b0000; flex: 1; padding: 10px; border: none; color: white; cursor: pointer; border-radius: 5px; }
-        */
+        
     </style>
 </head>
+ <!-- Aqui é onde é definido o id do body pra o programa poder puxar futuramente e esse onclick do js está aqui pra quando eu quiser ver mais de uma imagem pro plano de fundo, é só eu entrar no modo foco e com um clique eu troco a foto -->
 <body id="bodyHyrule" onclick="proximaFotoGaleria()">
 
     <div id="gallery-info">✨ Toque para explorar as memórias de Hyrule</div>
