@@ -4,14 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca de Hyrule</title>
+    
+    <link rel="icon" type="image/x-icon" href="https://static.thenounproject.com/png/18493-200.png">
+
     <style>
-        /* MANTIDO: Configurações de Cores e Estilo */
+        /* O :root está definindo as cores definitivas que serão usadas no site, porém precisa de acompanhamento,
+        alguém que use essas cores pegando as cores do root como base é muito importante se não, ele será inútil 
+        */
+        /*
         :root {
             --gold: #d4af37;
             --zelda-green: #00703c;
             --dark-glass: rgba(0, 0, 0, 0.75);
         }
-
+        */
+        /*No body está sendo definida a fonte, posição, imagem do background e o tamanho */
+        
         body {
             margin: 0; padding: 0;
             font-family: 'Segoe UI', Roboto, sans-serif;
@@ -25,7 +33,7 @@
             display: flex; justify-content: center;
             min-height: 100vh;
         }
-
+        /*
         .foco-ativo { cursor: pointer; }
         .foco-ativo .container, .foco-ativo .btn-export-group {
             opacity: 0;
@@ -60,6 +68,16 @@
             font-size: 2.8rem; color: var(--gold);
             text-transform: uppercase; letter-spacing: 4px;
             text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+            margin-bottom: 5px;
+        }
+
+        /* Contador Discreto */
+        /*
+        .contador-lendas {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 20px;
+            letter-spacing: 1px;
         }
 
         .registro-box {
@@ -89,7 +107,6 @@
         }
         .btn-main:hover { background: #00a85a; transform: scale(1.02); }
 
-        /* Estilo para a área de backup */
         .btn-export-group {
             display: flex;
             justify-content: center;
@@ -132,6 +149,7 @@
         .card-actions { padding: 15px; display: flex; gap: 10px; background: rgba(255,255,255,0.03); }
         .btn-edit { background: #444; flex: 1; padding: 10px; border: none; color: white; cursor: pointer; border-radius: 5px; }
         .btn-del { background: #8b0000; flex: 1; padding: 10px; border: none; color: white; cursor: pointer; border-radius: 5px; }
+        */
     </style>
 </head>
 <body id="bodyHyrule" onclick="proximaFotoGaleria()">
@@ -142,7 +160,7 @@
     <div class="container">
         <header>
             <h1>Biblioteca de Hyrule</h1>
-            <p>Lendas de Hyrule</p>
+            <div id="contadorLendas" class="contador-lendas">0 lendas registradas nos Livros de História</div>
         </header>
 
         <section>
@@ -184,86 +202,102 @@
     </div>
 
     <script>
-        /* MANTIDO: Banco de dados original de artes */
         const databaseZelda = {
             "the legend of zelda: echoes of wisdom": { 
                 capa: "https://m.media-amazon.com/images/I/71vCMnjgF7L._AC_UF1000,1000_QL80_.jpg",
-                galeria: ["https://uploads.jovemnerd.com.br/wp-content/uploads/2024/09/zelda_echoes_of_wisdom_linha_temporal__l00v1o6.jpg", "https://i.ytimg.com/vi/9wT30wTW06o/maxresdefault.jpg"]
+                galeria: ["https://uploads.jovemnerd.com.br/wp-content/uploads/2024/09/zelda_echoes_of_wisdom_linha_temporal__l00v1o6.jpg",
+                 "https://i.ytimg.com/vi/9wT30wTW06o/maxresdefault.jpg"]
             },
             "the legend of zelda: tears of the kingdom": {
                 capa: "https://cdn.awsli.com.br/2500x2500/2443/2443989/produto/2167923545f26e10d1f.jpg",
-                galeria: ["https://sm.ign.com/t/ign_ap/news/p/psa-the-le/psa-the-legend-of-zelda-tears-of-the-kingdom-art-book-has-se_vrr6.1200.jpg", "https://i.redd.it/b2ckbkurr62f1.gif"]
+                galeria: ["https://sm.ign.com/t/ign_ap/news/p/psa-the-le/psa-the-legend-of-zelda-tears-of-the-kingdom-art-book-has-se_vrr6.1200.jpg", 
+                "https://i.redd.it/b2ckbkurr62f1.gif"]
             },
             "the legend of zelda: breath of the wild": {
                 capa: "https://m.media-amazon.com/images/I/71jhb25cR0L._AC_UF1000,1000_QL80_.jpg",
-                galeria: ["https://external-preview.redd.it/LJ0tlQdStNyLMqSil6_03RNt8iuvrQY7rtw_6vyVax0.jpg?width=640&crop=smart&auto=webp&s=e95ae4224255d3ff46a1e67245953ff293fe76a9", "https://media.tenor.com/V3GZakZumXIAAAAM/zelda-cucco.gif"]
+                galeria: ["https://external-preview.redd.it/LJ0tlQdStNyLMqSil6_03RNt8iuvrQY7rtw_6vyVax0.jpg?width=640&crop=smart&auto=webp&s=e95ae4224255d3ff46a1e67245953ff293fe76a9",
+                 "https://media.tenor.com/V3GZakZumXIAAAAM/zelda-cucco.gif"]
             },
             "the legend of zelda: a link between worlds": {
                 capa: "https://cdn.ome.lt/legacy/images/galerias/The-Legend-of-Zelda-A-Link-Between-Worlds/The-Legend-of-Zelda-A-Link-Between-Worlds-28-ago-2013-1.jpg",
-                galeria: ["https://www.zeldauniverse.net/wp-content/uploads/2013/10/A-Link-Between-Worlds-Full-Size-Artwork.png", "https://i.imgflip.com/68nc5w.jpg"]
+                galeria: ["https://www.zeldauniverse.net/wp-content/uploads/2013/10/A-Link-Between-Worlds-Full-Size-Artwork.png", 
+                "https://i.imgflip.com/68nc5w.jpg"]
             },
             "the legend of zelda: skyward sword": {
                 capa: "https://m.media-amazon.com/images/I/81eFyVKONOL._AC_UF1000,1000_QL80_.jpg",
-                galeria: ["https://www.nintendo.com/eu/media/images/10_share_images/games_15/wii_24/SI_Wii_TheLegendOfZeldaSkywardSword_image1600w.jpg", "https://preview.redd.it/all-hey-its-that-zelda-guy-v0-rpbq7hia2m0b1.jpg?width=640&crop=smart&auto=webp&s=da420199eadbb74a8d98a2ac3014109eed4bb58a"]
+                galeria: ["https://www.nintendo.com/eu/media/images/10_share_images/games_15/wii_24/SI_Wii_TheLegendOfZeldaSkywardSword_image1600w.jpg", 
+                "https://preview.redd.it/all-hey-its-that-zelda-guy-v0-rpbq7hia2m0b1.jpg?width=640&crop=smart&auto=webp&s=da420199eadbb74a8d98a2ac3014109eed4bb58a"]
             },
             "the legend of zelda: spirit tracks": {
                 capa: "https://cdn.awsli.com.br/600x450/1385/1385452/produto/385471848/d_nq_np_723581-mla99379806032_112025-o-hge8ls71xa.webp",
-                galeria: ["https://cdn.displate.com/artwork/1200x857/2020-02-07/2887ce4e87f9e0d0c448d12806d72085_7f1e3ea8d77122f0d52146bff918ecf1.jpg", "https://i.pinimg.com/736x/58/5e/13/585e1381ff5763dfd5ababe67bc2dcdc.jpg"]
+                galeria: ["https://cdn.displate.com/artwork/1200x857/2020-02-07/2887ce4e87f9e0d0c448d12806d72085_7f1e3ea8d77122f0d52146bff918ecf1.jpg", 
+                "https://i.pinimg.com/736x/58/5e/13/585e1381ff5763dfd5ababe67bc2dcdc.jpg"]
             },
             "the legend of zelda: phantom hourglass": {
                 capa: "https://upload.wikimedia.org/wikipedia/pt/archive/8/81/20171115000406%21The_Legend_of_Zelda_Phantom_Hourglass_capa.png",
-                galeria: ["https://i.pinimg.com/736x/01/37/eb/0137eb1f719d6d97ef57fc3ce95b26e9.jpg", "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKUD9KzKl4qhED7aQxhXbNO841A8_LxuNQGiOZMQ6qps6DWRvVsmgI5MPFqS5qYiFdXj9i3tD1omLYMHdTqVapVkKqEkx2tDoMLeaZsXsQV0XrDyISib76iHeY9z5v5eOcesh0dLkP6Uw/s1600/giphy.gif"]
+                galeria: ["https://i.pinimg.com/736x/01/37/eb/0137eb1f719d6d97ef57fc3ce95b26e9.jpg",
+                 "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhKUD9KzKl4qhED7aQxhXbNO841A8_LxuNQGiOZMQ6qps6DWRvVsmgI5MPFqS5qYiFdXj9i3tD1omLYMHdTqVapVkKqEkx2tDoMLeaZsXsQV0XrDyISib76iHeY9z5v5eOcesh0dLkP6Uw/s1600/giphy.gif"]
             },
             "the legend of zelda: twilight princess": {
                 capa: "https://m.media-amazon.com/images/I/811Zo-8yksL.jpg",
-                galeria: ["https://assets1.ignimgs.com/2012/10/19/twilightprincessheaderjpg-081378.jpg", "https://preview.redd.it/baby-im-preying-on-you-tonight-v0-1nbut93vzt2e1.png?width=720&format=png&auto=webp&s=d3f5e2311f98c7a7bcfd31ac0d5ed1186dac5c60"]
+                galeria: ["https://assets1.ignimgs.com/2012/10/19/twilightprincessheaderjpg-081378.jpg",
+                 "https://preview.redd.it/baby-im-preying-on-you-tonight-v0-1nbut93vzt2e1.png?width=720&format=png&auto=webp&s=d3f5e2311f98c7a7bcfd31ac0d5ed1186dac5c60"]
             },
             "the legend of zelda: the minish cap": {
                 capa: "https://upload.wikimedia.org/wikipedia/pt/2/21/The_Legend_of_Zelda_The_Minish_Cap_capa.png",
-                galeria: ["https://i.redd.it/mc-the-minish-cap-has-to-have-some-of-my-favorite-toon-v0-gfvyxq58qdae1.png?width=1800&format=png&auto=webp&s=d5ad8665387525ad06aa1f752faf30cd8b85522b", "https://i.redd.it/c7s0mqv9b1051.png"]
+                galeria: ["https://i.redd.it/mc-the-minish-cap-has-to-have-some-of-my-favorite-toon-v0-gfvyxq58qdae1.png?width=1800&format=png&auto=webp&s=d5ad8665387525ad06aa1f752faf30cd8b85522b",
+                 "https://i.redd.it/c7s0mqv9b1051.png"]
             },
             "the legend of zelda: wind waker": {
                 capa: "https://m.media-amazon.com/images/I/51p83TJUAYL._AC_UF1000,1000_QL80_.jpg",
-                galeria: ["https://i.redd.it/kj5hlou680xe1.jpeg", "https://i.redd.it/o671eudspvob1.jpeg"]
+                galeria: ["https://i.redd.it/kj5hlou680xe1.jpeg",
+                 "https://i.redd.it/o671eudspvob1.jpeg"]
             },
             "the legend of zelda: majora's mask": {
                 capa: "https://upload.wikimedia.org/wikipedia/pt/3/35/The_Legend_of_Zelda_Majora%27s_Mask_capa.png",
-                galeria: ["https://external-preview.redd.it/mm-majoras-mask-art-director-wanted-to-work-on-one-last-v0-fnes5ntCClus7eST8-RRf2emrQl55whDWt6bMo3PyKM.jpg?width=640&crop=smart&auto=webp&s=0eaf321e772c62d5eaff46caef9164ded1abf9d0", "https://external-preview.redd.it/-jM6t9c17FeN6g6mIvU6ofAW6GfP0hJEvJ1RKLuwT3Q.png?auto=webp&s=76ec2d20e9b9587c4008c444ad580924402e1abc"]
+                galeria: ["https://external-preview.redd.it/mm-majoras-mask-art-director-wanted-to-work-on-one-last-v0-fnes5ntCClus7eST8-RRf2emrQl55whDWt6bMo3PyKM.jpg?width=640&crop=smart&auto=webp&s=0eaf321e772c62d5eaff46caef9164ded1abf9d0",
+                 "https://external-preview.redd.it/-jM6t9c17FeN6g6mIvU6ofAW6GfP0hJEvJ1RKLuwT3Q.png?auto=webp&s=76ec2d20e9b9587c4008c444ad580924402e1abc"]
             },
             "the legend of zelda: ocarina of time": {
                 capa: "https://s2-techtudo.glbimg.com/Gl0uFZq30gR-iY3zuij0Hxaeg9o=/0x0:695x476/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2021/f/Y/wnMJWOQAe0EikqH0oCQg/2013-11-22-zelda01.jpg",
-                galeria: [ "https://pbs.twimg.com/media/G-Ejo2pbAAA3Lku.jpg", "https://i.redd.it/82nrq9dii93f1.gif"]
+                galeria: [ "https://pbs.twimg.com/media/G-Ejo2pbAAA3Lku.jpg",
+                 "https://i.redd.it/82nrq9dii93f1.gif"]
             },
             "the legend of zelda: oracle of ages": {
                 capa: "https://upload.wikimedia.org/wikipedia/pt/a/a6/The_Legend_of_Zelda_Oracle_of_Ages_capa_europa_Game_Boy_Color.png",
-                galeria: ["https://www.rpgfan.com/wp-content/uploads/2020/12/The-Legend-of-Zelda-Oracle-of-Ages-Artwork-004.webp", "https://media.tenor.com/YniopqJYMIkAAAAe/gato-rindo.png"]
+                galeria: ["https://www.rpgfan.com/wp-content/uploads/2020/12/The-Legend-of-Zelda-Oracle-of-Ages-Artwork-004.webp",
+                 "https://media.tenor.com/YniopqJYMIkAAAAe/gato-rindo.png"]
             },
             "the legend of zelda: oracle of seasons": {
                 capa: "https://upload.wikimedia.org/wikipedia/pt/f/fe/The_Legend_of_Zelda_Oracle_of_Seasons_capa_europa_Game_Boy_Color.png",
-                galeria: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7cjYDfmmgQuzLhIMJONTV-3XR4k3K1BFZsw&s", "https://nintendoreviewsblog.wordpress.com/wp-content/uploads/2013/06/tloz_oracle_of_seasons_presentation.jpg?w=584"]
+                galeria: ["https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7cjYDfmmgQuzLhIMJONTV-3XR4k3K1BFZsw&s", 
+                "https://nintendoreviewsblog.wordpress.com/wp-content/uploads/2013/06/tloz_oracle_of_seasons_presentation.jpg?w=584"]
             },
             "the legend of zelda: link's awakening": { 
                 capa: "https://upload.wikimedia.org/wikipedia/pt/f/f8/The_Legend_of_Zelda_Link%27s_Awakening_capa.png",
-                galeria: ["https://i.etsystatic.com/10064703/r/il/2a87e5/4983455899/il_570xN.4983455899_pmsp.jpg", "https://preview.redd.it/this-meme-is-true-v0-c9v1fhwtmqdg1.jpeg?auto=webp&s=8bf85fcf8036c30fc5c339aa5b37f8d4a92ac28d"]
+                galeria: ["https://i.etsystatic.com/10064703/r/il/2a87e5/4983455899/il_570xN.4983455899_pmsp.jpg", 
+                "https://preview.redd.it/this-meme-is-true-v0-c9v1fhwtmqdg1.jpeg?auto=webp&s=8bf85fcf8036c30fc5c339aa5b37f8d4a92ac28d"]
             },
             "the legend of zelda: a link to the past": { 
                 capa: "https://upload.wikimedia.org/wikipedia/pt/3/31/The_Legenda_of_Zelda_A_Link_to_the_Past_capa.png",
-                galeria: ["https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/alttp_link_looking_at_the_tower_of_hera_artwork.png", "https://i.makeagif.com/media/5-26-2017/RUzW55.gif"]
+                galeria: ["https://mediaproxy.tvtropes.org/width/1200/https://static.tvtropes.org/pmwiki/pub/images/alttp_link_looking_at_the_tower_of_hera_artwork.png", 
+                "https://i.makeagif.com/media/5-26-2017/RUzW55.gif"]
             },
             "the legend of zelda ii: the adventure of link": { 
                 capa: "https://greenhillszone.com/wp-content/uploads/2013/01/563487_29057_front.jpg",
-                galeria: ["https://external-preview.redd.it/zelda-2-was-nintendo-at-its-best-unpredictable-v0-p_lQE8qCivcCjvUstY6svoZHkLTU4QdFG-b_h5Aznsw.jpg?auto=webp&s=2f2abc5444fde443f3c1273ea6bfa9f7a87fc3c3", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuD4y-4t3zgTpmMr69zZcmvfxrqADTUM3H0A&s"]
+                galeria: ["https://external-preview.redd.it/zelda-2-was-nintendo-at-its-best-unpredictable-v0-p_lQE8qCivcCjvUstY6svoZHkLTU4QdFG-b_h5Aznsw.jpg?auto=webp&s=2f2abc5444fde443f3c1273ea6bfa9f7a87fc3c3", 
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuD4y-4t3zgTpmMr69zZcmvfxrqADTUM3H0A&s"]
             },
             "the legend of zelda": { 
                 capa: "https://upload.wikimedia.org/wikipedia/pt/9/96/The_Legend_of_Zelda_1_capa.png",
-                galeria: ["https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4YbJ8OQjMvVZ0TO5EQEmuy8E9L_VYoQIqDTdQrRcFUVDSxiZ05CZBtoqwZ65yPBaPVCyRh_Yd7YxQuuC_QgWrSXIIjeTNHDED_HIRALo9U0KvcrXEqQXbrj_aTTY5KLsFtEcsIkxw4tCE/s1600/Zelda_NES_Nintendo.jpg", "https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyZ244OXJyMXFxOHh2ZHBtcGE4dmptMWtkM3U2ejJtOXRwNXQ1cGZ3bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/kuGxJyTQQAUw0/giphy.gif"]
+                galeria: ["https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj4YbJ8OQjMvVZ0TO5EQEmuy8E9L_VYoQIqDTdQrRcFUVDSxiZ05CZBtoqwZ65yPBaPVCyRh_Yd7YxQuuC_QgWrSXIIjeTNHDED_HIRALo9U0KvcrXEqQXbrj_aTTY5KLsFtEcsIkxw4tCE/s1600/Zelda_NES_Nintendo.jpg", 
+                "https://media3.giphy.com/media/v1.Y2lkPTZjMDliOTUyZ244OXJyMXFxOHh2ZHBtcGE4dmptMWtkM3U2ejJtOXRwNXQ1cGZ3bSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/kuGxJyTQQAUw0/giphy.gif"]
             }
         };
 
         let jogos = JSON.parse(localStorage.getItem('bibliotecaHyrule')) || [];
         let fotoAtualIndex = 0;
 
-        /* MANTIDO: Funções de visualização e lógica original */
         function toggleModoFoco(event) {
             if(event) event.stopPropagation();
             const body = document.getElementById('bodyHyrule');
@@ -311,7 +345,14 @@
             return `${dia}/${mes}/${ano}`;
         }
 
+        function atualizarContador() {
+            const el = document.getElementById('contadorLendas');
+            const n = jogos.length;
+            el.innerText = `${n} ${n === 1 ? 'lenda registrada' : 'lendas registradas'} nos Livros de História`;
+        }
+
         function renderizarJogos() {
+            atualizarContador();
             const lista = document.getElementById('listaJogos');
             lista.innerHTML = '';
             if (jogos.length > 0) {
@@ -387,22 +428,13 @@
             document.querySelectorAll('input:not([type="hidden"])').forEach(i => i.value = '');
         }
 
-        /* --- NOVO: SISTEMA DE CSV (ENTENDEU?) --- */
-
-        // Transforma o array de objetos em uma String CSV
         function exportarCSV() {
             if (jogos.length === 0) return alert("Não há registros para exportar!");
-            
-            // Cabeçalho do CSV
             let csvContent = "nome,dataInicio,dataZerou,dungeons,plataforma\n";
-            
-            // Linhas de dados
             jogos.forEach(j => {
-                // Escapa vírgulas caso o usuário tenha usado no nome do jogo
                 let linha = `"${j.nome}","${j.dataInicio}","${j.dataZerou}","${j.dungeons}","${j.plataforma}"\n`;
                 csvContent += linha;
             });
-
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement("a");
             const url = URL.createObjectURL(blob);
@@ -414,24 +446,17 @@
             document.body.removeChild(link);
         }
 
-        // Lê o arquivo CSV e reconstrói o array de jogos
         function importarCSV(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 const text = e.target.result;
                 const linhas = text.split('\n');
                 const novosJogos = [];
-
-                // Começa do 1 para pular o cabeçalho
                 for (let i = 1; i < linhas.length; i++) {
                     if (linhas[i].trim() === "") continue;
-
-                    // Regex para separar por vírgula mas respeitar aspas
                     const colunas = linhas[i].split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-                    
                     if (colunas.length >= 5) {
                         novosJogos.push({
                             nome: colunas[0].replace(/"/g, '').trim(),
@@ -442,7 +467,6 @@
                         });
                     }
                 }
-
                 if (confirm(`Deseja importar ${novosJogos.length} jogos? Isso substituirá sua lista atual.`)) {
                     jogos = novosJogos;
                     localStorage.setItem('bibliotecaHyrule', JSON.stringify(jogos));
@@ -450,7 +474,7 @@
                 }
             };
             reader.readAsText(file);
-            event.target.value = ''; // Reseta o input de arquivo
+            event.target.value = '';
         }
 
         renderizarJogos();
