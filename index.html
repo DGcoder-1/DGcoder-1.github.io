@@ -395,8 +395,11 @@
             fotoAtualIndex++; atualizarBackgroundFoco();
         }
         
-        /*Essa function faz com que um if se não tiver nenhum jogo registrado  a constante último jogo   */
-
+        /*Essa function faz com que um if se não tiver nenhum jogo registrado diminua o array jogos por um depois chama a function BuscarInfoJogo,
+        que checa as informações dos jogos e dá um retorno depois ele busca as imagens na galeria,
+         depois pega o resto da divisão do valor da FotoAtualIndex que troca de acordo com o clique e do valor da quantidade de fotos da galeria,
+         linka o resultado pra aparecer na tela e no fim concatena pra dizer se é a Visão 1 ou Visão 2 do background  */
+ 
 
         function atualizarBackgroundFoco() {
             if (jogos.length === 0) return;
@@ -562,3 +565,4 @@
     </script>
 </body>
 </html>
+
