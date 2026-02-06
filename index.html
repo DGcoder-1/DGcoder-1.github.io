@@ -411,6 +411,11 @@
             document.getElementById('gallery-info').innerText = `Visão ${indexReal + 1} de ${galeria.length}`;
         }
 
+        /*Essa function buscarInfoJogo é responsável por interpretar o nome do jogo e traduzir pro programa pra letras minúsculas e o trim remove espaços inúteis do reconhecimento,
+        object.keys está buscando o nome dos meus jogos e o sort(a, b) tá ordenando eles do maior pro menor na hora de reconhecer
+         e isso evita erros de por exemplo o usuário escrever o nome de um jogo e acabar dando em outro com um começo de nome parecido,
+          no for o sistema checa cada um dos nomes dos jogos e quando ele encontra o que o usuário escreveu a const databaseZelda devolve as imagens de fundo e capas dos jogos  e caso não encontre o nome manda outras imagens */
+
         function buscarInfoJogo(nome) {
             const nomeFiltro = nome.toLowerCase().trim();
             const chaves = Object.keys(databaseZelda).sort((a, b) => b.length - a.length);
@@ -423,17 +428,33 @@
             };
         }
 
+         /*Essa function formatarData age da seguinte maneira, se não tiver nada no campo de data quando salvar o data vai ser 3 tracinhos 
+         e depois ele define o primeiro traço como dia,o segundo como mês e o último o ano e ai é possível separar um por um espaçadosnpor barras tipo 15/04/2010  */
+
         function formatarData(data) {
             if (!data) return "---";
             const [ano, mes, dia] = data.split('-');
             return `${dia}/${mes}/${ano}`;
         }
+ 
+        /*Essa function atualizarContador busca o contador de jogos, atribui uma constante ao número de jogos dentro do array "jogos" 
+        e por último concatena usando o número de jogos e colocand na frente da mensagem de quantos jogos registrados tem na página*/
 
         function atualizarContador() {
             const el = document.getElementById('contadorLendas');
             const n = jogos.length;
             el.innerText = `${n} ${n === 1 ? 'lenda registrada' : 'lendas registradas'} nos Livros de História`;
         }
+       
+        /*Essa function renderizar jogos primeiramente chama o atualizador de contador pra ele se alterar quando os jogos forem importados,
+        chama o container com os cards dos jogos e a lista.innerHTML zera os dados que haviam na página anteriormente,
+        se tiver 1 ou mais jogos na lista de jogos desconta -1 do array pra conta dar certo 
+        e usa o buscarInfoJogo para descobrir qual é o último jogo registrado pra deixar as imagens dele na página 
+        e define a primeria foto da galeria do último jogo registrado pra ele aparecer no fundo da página, 
+        mas se não houver nenhum jogo registrado ele vai mandar outra imagem como a de fundo a "padrão do site",
+        depois a função caça o nome dos jogos e vai colocando mais cartas dos jogos e "empilhando" elas,
+        depois cria toda a estrutura dos cards com divs e textos e se não tem nada escrito aparece N\A e estrutura o editar e o delete pra não colidir com o modo foco
+        e chama as funções de editar e apagar */
 
         function renderizarJogos() {
             atualizarContador();
@@ -565,4 +586,3 @@
     </script>
 </body>
 </html>
-
