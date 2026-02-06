@@ -487,6 +487,15 @@
             });
         }
 
+        /*Essa function salvarJogo no começo declara uma variável=ao que está escrito no campo onde o usuário digita o nome do jogo, 
+        se não tiver nada escrito e o usuário tentar salvar o sistema manda um alert exigindo que coloque algo no nome pra poder registrar o jogo,
+        depois vem uma constante que  atribui os valores dentro do objeto jogo aos valores e nome obtidos quando registrou os jogos,
+        se o editIndex estiver vazio o comando push vai trocar os valores antigos pelos novos,
+         se não estiver vazio no caso se alguém já editou antes o programa vai pegar e adicionar novos valores, trocando o edit index para o tome seu lugar entre as lendas
+         e depois a função pega as informações fornecidas pelo usuário nos campos de jogos a informação é convertida em texto puro 
+         e agora com tudo salvo a página limpa os campos de texto para o próximo registro ser escrito e desenha os cards atuais já salvos na tela */
+
+
         function salvarJogo() {
             const nomeInput = document.getElementById('nome').value;
             if (!nomeInput) return alert("Dê um título à sua lenda!");
@@ -509,6 +518,11 @@
             limparCampos(); renderizarJogos();
         }
 
+        /*Essa function deletarJogo no começo ela tem um confirm pra quando o cara for excluir um jogo e pergunta se a pessoa tem certeza,
+        ele funciona da seguinte maneira se não for excluir a função não faz nada, mas se for confirmado o jogos.splice(index,1) vai abrir o index substituir o valor de número 1
+        e remove o que tem nesse espaço e atualiza o a memória local pra dar tudo certo e o renderizarJogos atualiza novamente os cards e agora tudo está atualizado 
+         */
+        
         function deletarJogo(index) {
             if (confirm("Apagar este registro?")) {
                 jogos.splice(index, 1);
@@ -516,6 +530,11 @@
                 renderizarJogos();
             }
         }
+
+        /*Essa function prepararEdicao cria uma constante jogo pra ser mexer com a memória temporária do programa,
+         depois ele pega os valores do jogo e se configura pra ser capaz de salvar todos as possíveis mudanças e ao invés de criar um registro de jogo novo,
+         apenas substitui o antigo
+         */
 
         function prepararEdicao(index) {
             const jogo = jogos[index];
@@ -529,9 +548,24 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
+        /*Essa function limparCampos colocamos um pouquinho de css aqui caçamos o elementos visíveis com.forEarch
+        e zeramos o valor de todos os elementos exceto os com hidden, atribuindo '' no valor
+         */
+
         function limparCampos() {
             document.querySelectorAll('input:not([type="hidden"])').forEach(i => i.value = '');
         }
+
+        /*Essa function ExportarCSV faz com que se não tiver nenhum jogo registrado,
+         ele retorne um alert dizendo que não há jogos para registrar,
+         Agora vamos usar CSV que é apenas um texto onde as informações são separadas por vírgulas, 
+         e o \n quebrou uma linha, depois o código percorre todos os dados dos jogos, 
+         depois a const blob faz com que o csvContent seja convertido uma mini cápsula com arquivos reais,
+         como o js não consegue salvar como sozinho é preciso criar a constante link,
+         depois gera um endereço temporário para o blob,
+         depois tem um código para clicar no link e o navegador vai fazer o download sozinho, 
+         deixa esse link invisível com o hidden e depois se livra dele com o removeChild
+         */
 
         function exportarCSV() {
             if (jogos.length === 0) return alert("Não há registros para exportar!");
@@ -550,6 +584,28 @@
             link.click();
             document.body.removeChild(link);
         }
+
+        /*Essa function importarCSV faz com que quando escolhemos um arquivo no nosso computador, o navegador gera um evento, 
+          essa  file pega o primeiro item das files que é o 0
+           e se o usuário não selecionou nada o if(!file) return para a function,
+           mas continuando a function,
+           já que o js não consegue ler arquivos do HD,
+           mas o fileReader criado é um objeto autorizado a ler o está dentro do arquivo de texto que será importado pra página
+           e o onload diz que assim que ele terminar de ler ele vai executar o código do function(e),
+           quando importa o arquivo vem como um texto quando e o linhas=text.split('\n') quebram o texto em linhas a cada quebra de linha que vê,
+           depois é criado um array const novosJogos=[] que vai ser o espaço pra os novos jogos importados,
+           depois é criado um for onde ele se repete somente enquanto ele for menor que a quantidade de elementos no array linhas,
+           se o programa achar algum elemento vazio do array linhas é só pular e continuar,
+           depois é criado const colunas que se ele ver alguma vírgula ele corta, exceto se as palavras estiverem entre parênteses,
+           se tiver 5 elementos ou mais  que no caso são nome,plataforma data e etc nessa que saiu picotando geral,
+           então o sistema empurra esses jogos na memória da página limpando as aspas,espaços, etc e pronto,
+           e um último if pra não se repetir ele  tem um confirm que pergunta,
+           se você realmente quer substituir os arquivos se sim,
+           jogos vai receber novas informações  vai salvar no localStorage texto e no fim renderizaJogos novamente
+           e no final fecha com um arquivo o readAsText(file) serve para converter bits em bytes
+            e quando  arquivo termina de ser lido o onload acorda e processa os dados
+            e o reset é pra quando termina transforma o botão de importarCSV em vazio
+         */
 
         function importarCSV(event) {
             const file = event.target.files[0];
@@ -582,7 +638,11 @@
             event.target.value = '';
         }
 
+        /*Essa function é chamada no fim novamente para servir de ponto de partida pra todo o jss rodar
+         */
+
         renderizarJogos();
     </script>
 </body>
 </html>
+
